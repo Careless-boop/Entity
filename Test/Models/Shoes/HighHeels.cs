@@ -17,7 +17,7 @@ namespace Test.Models.Shoes
         [Column(TypeName = "nvarchar(20)")]
         [EnumDataType(typeof(HeelsType))]
         public HeelsType Heels { get { return _heels; } private set { _heels = value; } }
-        public float HeelsHeight { get { return _height; } private set { _height = value; } }
+        public float Height { get { return _height; } private set { _height = value; } }
 
         public HighHeels(string name, string brand, decimal price, HeelsType heels, float height) : base(name, brand, price)
         { 

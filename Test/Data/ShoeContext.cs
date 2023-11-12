@@ -16,6 +16,7 @@ namespace Test.Data
         public DbSet<SportShoes> SportShoes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserCart> UserCarts { get; set; }
+        public DbSet<UserFavorite> UserFavorites { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderShoe> OrderedShoes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -71,6 +72,19 @@ namespace Test.Data
                 .WithMany(s => s.OrderShoe)
                 .HasForeignKey(os => os.ShoeId);
 
+            //Configuration of unify entity UserFavorite
+            modelBuilder.Entity<UserFavorite>()
+            .HasKey(uf => new { uf.UserId, uf.ShoeFId });
+
+            modelBuilder.Entity<UserFavorite>()
+                .HasOne(uf => uf.User)
+                .WithMany(u => u.UserFavorites)
+                .HasForeignKey(uf => uf.UserId);
+
+            modelBuilder.Entity<UserFavorite>()
+                .HasOne(uf => uf.ShoeF)
+                .WithMany(s => s.UserFavorites)
+                .HasForeignKey(os => os.ShoeFId);
         }
     }
 }

@@ -12,8 +12,8 @@ using Test.Data;
 namespace Test.Migrations
 {
     [DbContext(typeof(ShoeContext))]
-    [Migration("20231112150134_init2")]
-    partial class init2
+    [Migration("20231112230602_test_null")]
+    partial class test_null
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,9 @@ namespace Test.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Brand")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -110,35 +113,89 @@ namespace Test.Migrations
                     b.ToTable("UserCarts");
                 });
 
-            modelBuilder.Entity("Test.Models.Shoes.HikingShoes", b =>
+            modelBuilder.Entity("Test.Unifiers.UserFavorite", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShoeFId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ShoeFId");
+
+                    b.HasIndex("ShoeFId");
+
+                    b.ToTable("UserFavorites");
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.HighHeels", b =>
                 {
                     b.HasBaseType("Test.Models.Shoes.Shoe");
 
-                    b.Property<bool>("IsReal")
+                    b.Property<string>("Heels")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.ToTable("HighHeels", (string)null);
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.HikingBoots", b =>
+                {
+                    b.HasBaseType("Test.Models.Shoes.Shoe");
+
+                    b.Property<bool>("AreWaterproof")
                         .HasColumnType("bit");
 
-                    b.ToTable("HikingShoes", (string)null);
+                    b.Property<float>("Traction")
+                        .HasColumnType("real");
+
+                    b.ToTable("HikingBoots", (string)null);
                 });
 
             modelBuilder.Entity("Test.Models.Shoes.Sandals", b =>
                 {
                     b.HasBaseType("Test.Models.Shoes.Shoe");
 
-                    b.Property<float>("Traction")
-                        .HasColumnType("real");
+                    b.Property<bool>("AreOpenToe")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Strap")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
 
                     b.ToTable("Sandals", (string)null);
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.Sneackers", b =>
+                {
+                    b.HasBaseType("Test.Models.Shoes.Shoe");
+
+                    b.Property<string>("Closure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Height")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Sneackers");
                 });
 
             modelBuilder.Entity("Test.Models.Shoes.SportShoes", b =>
                 {
                     b.HasBaseType("Test.Models.Shoes.Shoe");
 
-                    b.Property<string>("Height")
+                    b.Property<string>("Cushioning")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
-                    b.ToTable("SportShoes", (string)null);
+                    b.Property<bool>("HaveArchSupport")
+                        .HasColumnType("bit");
+
+                    b.ToTable("SportShoes");
                 });
 
             modelBuilder.Entity("Test.Unifiers.OrderShoe", b =>
@@ -179,11 +236,39 @@ namespace Test.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Test.Models.Shoes.HikingShoes", b =>
+            modelBuilder.Entity("Test.Unifiers.UserFavorite", b =>
+                {
+                    b.HasOne("Test.Models.Shoes.Shoe", "ShoeF")
+                        .WithMany("UserFavorites")
+                        .HasForeignKey("ShoeFId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Test.Models.User", "User")
+                        .WithMany("UserFavorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShoeF");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.HighHeels", b =>
                 {
                     b.HasOne("Test.Models.Shoes.Shoe", null)
                         .WithOne()
-                        .HasForeignKey("Test.Models.Shoes.HikingShoes", "Id")
+                        .HasForeignKey("Test.Models.Shoes.HighHeels", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.HikingBoots", b =>
+                {
+                    b.HasOne("Test.Models.Shoes.Shoe", null)
+                        .WithOne()
+                        .HasForeignKey("Test.Models.Shoes.HikingBoots", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -193,6 +278,15 @@ namespace Test.Migrations
                     b.HasOne("Test.Models.Shoes.Shoe", null)
                         .WithOne()
                         .HasForeignKey("Test.Models.Shoes.Sandals", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Test.Models.Shoes.Sneackers", b =>
+                {
+                    b.HasOne("Test.Models.Shoes.Shoe", null)
+                        .WithOne()
+                        .HasForeignKey("Test.Models.Shoes.Sneackers", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -216,11 +310,15 @@ namespace Test.Migrations
                     b.Navigation("OrderShoe");
 
                     b.Navigation("UserCarts");
+
+                    b.Navigation("UserFavorites");
                 });
 
             modelBuilder.Entity("Test.Models.User", b =>
                 {
                     b.Navigation("UserCarts");
+
+                    b.Navigation("UserFavorites");
                 });
 #pragma warning restore 612, 618
         }

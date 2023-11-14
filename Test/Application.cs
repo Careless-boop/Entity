@@ -26,7 +26,7 @@ namespace Test
                 }
                 else
                 {
-                    user = db.Users.Include(u => u.UserCarts).ThenInclude(uc => uc.ShoeC).Include(u=>u.UserFavorites).ThenInclude(uf=>uf.ShoeF).First(u => u.Id == tempId);
+                    user = db.Users.Include(u => u.UserCarts).ThenInclude(uc => uc.ShoeC).Include(u=>u.UserFavorites).ThenInclude(uf=>uf.ShoeF).Single(u => u.Id == tempId);
                 }
                 uint select = 0;
                 while (select != 4)

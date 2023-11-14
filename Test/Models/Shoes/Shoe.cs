@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Test.Unifiers;
 
 namespace Test.Models.Shoes
@@ -16,8 +17,9 @@ namespace Test.Models.Shoes
         public int Id { get { return _id; } private set { _id = value; } }
         [DefaultValue("NAME")]
         public string Name { get { return _name; } private set { _name = value; } }
-        
+        [MaxLength(20)]
         public string? Brand { get { return _brand; } private set { _brand = value; } }
+        [Required]
         public decimal Price { get { return _price; } private set { _price = value; } }
         public ICollection<UserCart> UserCarts { get { return _userCarts; } private set { _userCarts = value; } }
         public ICollection<UserFavorite> UserFavorites { get { return _userFavorites; } private set { _userFavorites = value; } }
